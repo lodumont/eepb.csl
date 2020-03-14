@@ -7,24 +7,27 @@
       <name>Léonard Dumont</name>
       <email>dumont.leonard@gmail.com</email>
     </author>
+    <id>https://github.com/lodumont/eepb.csl/blob/master/eepb.csl</id>
     <category citation-format="author-date"/>
     <category field="anthropology"/>
     <summary>Style élaborée à partir du style bspf de B Macgregor</summary>
-    <updated>2020-02-28T13:23:00+00:00</updated>
+    <updated>2020-03-13T12:00:00+00:00</updated>
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
   <locale xml:lang="fr">
     <terms>
-      <term name="editor" form="short">dir.</term>
+      <term name="editor" form="short"></term>
+      <term name="editor" form="verb">dir.</term>
+      <term name="and" form="symbol">, </term>
     </terms>
   </locale>
   <macro name="editor">
     <names variable="editor" delimiter=" ">
-      <name name-as-sort-order="all" sort-separator=" " initialize-with=". " delimiter=" " delimiter-precedes-last="never">
+      <name name-as-sort-order="all" sort-separator=" " initialize-with=". " delimiter=", " delimiter-precedes-last="never">
         <name-part name="family" text-case="uppercase"/>
         <name-part name="given" text-case="uppercase" prefix="(" suffix=")"/>
       </name>
-      <label form="short" prefix=" "/>
+      <label form="verb" prefix=" "/>
     </names>
   </macro>
   <macro name="anon">
@@ -34,6 +37,7 @@
       </if>
     </choose>
   </macro>
+  
   <macro name="author">
     <names variable="author">
       <name name-as-sort-order="all" sort-separator=" " initialize-with=". " delimiter=", " delimiter-precedes-last="never">
@@ -42,24 +46,36 @@
       </name>
       <label form="short" prefix=" "/>
       <substitute>
-        <names variable="editor"/>
+        <text macro="editor"/>
         <text macro="anon"/>
       </substitute>
     </names>
-  </macro>  
+  </macro>
   <macro name="author-short">
-    <names variable="author">
-      <name form="short" and="text" delimiter=" " delimiter-precedes-last="never" initialize-with=". ">
-        <name-part name="family" text-case="capitalize-first"/>
-        <name-part name="given" text-case="capitalize-first"/>
-      </name>
-      <label form="short" prefix=" "/>
-      <substitute>
-        <names variable="editor"/>
-        <names variable="translator"/>
-        <text macro="anon"/>
-      </substitute>
-    </names>
+    <choose>
+        <if variable="author">
+            <names variable="author">
+                <name name-as-sort-order="all" sort-separator=" " initialize-with=". " et-al-min="3" et-al-use-first="1" form="short">
+                    <name-part name="family" text-case="capitalize-first"/>
+                </name>
+                <label form="short" prefix=" "/>
+                <substitute>
+                    <text macro="anon"/>
+                </substitute>
+            </names>
+        </if>
+        <else>
+            <names variable="editor">
+                <name name-as-sort-order="all" sort-separator=" " initialize-with=". " et-al-min="3" et-al-use-first="1" form="short">
+                    <name-part name="family" text-case="capitalize-first"/>
+                </name>
+                <label form="short" prefix=" "/>
+                <substitute>
+                    <text macro="anon"/>
+                </substitute>
+            </names>
+        </else>
+    </choose>
   </macro>
   <macro name="access">
     <choose>
@@ -89,6 +105,39 @@
       <text macro="year-date"/>
     </group>
   </macro>
+  <macro name="proceedings">
+    <choose>
+        <if variable="event">
+            <group delimiter=", ">
+                <text variable="event" prefix=". "/>
+                <text macro="proceedings-place"/>
+                <text macro="proceedings-date"/>
+            </group>
+        </if>
+    </choose>
+  </macro>
+  <macro name="proceedings-date">
+    <choose>
+        <if variable="event-date">
+            <date variable="event-date" font-style="italic">
+                <date-part name="day" suffix=" " range-delimiter="-"/>
+                    <date-part name="month" suffix=" "/>
+                        <date-part name="year" range-delimiter="/"/>
+            </date>
+        </if>
+    </choose>
+  </macro>
+  <macro name="proceedings-place">
+    <choose>
+        <if variable="event-place">
+            <choose>
+                <if variable="event-date">
+                    <text variable="event-place"/>
+                </if>
+            </choose>
+        </if>
+    </choose>
+  </macro>
   <macro name="year-date">
     <choose>
       <if variable="issued">
@@ -110,7 +159,7 @@
   <citation et-al-min="3" et-al-use-first="1" disambiguate-add-year-suffix="true" disambiguate-add-names="true" disambiguate-add-givenname="true" collapse="year">
     <layout prefix="(" suffix=")" delimiter="&#160;; ">
       <group delimiter="&#160;; ">
-        <group delimiter=", ">
+        <group delimiter=" ">
           <text macro="author-short"/>
           <text macro="year-date"/>
         </group>
@@ -118,7 +167,7 @@
       </group>
     </layout>
   </citation>
-  <bibliography et-al-min="4" et-al-use-first="1">
+  <bibliography>
     <sort>
       <key macro="author"/>
       <key variable="title"/>
@@ -126,16 +175,7 @@
     <layout suffix=" ">
       <group suffix=". — " delimiter=" ">
         <group font-weight="bold" suffix=" :" delimiter=" ">
-            <names variable="author">
-                <name variable="author" name-as-sort-order="all" sort-separator=" " initialize-with=". " et-al-min="3" et-al-use-first="1" form="short">
-                    <name-part name="family" text-case="capitalize-first"/>
-                </name>
-                <label form="short" prefix=" "/>
-                <substitute>
-                    <names variable="editor"/>
-                    <text macro="anon"/>
-                </substitute>
-            </names>
+            <text macro="author-short"/>
             <text macro="year-date"/>
         </group>
         <text macro="author"/>
@@ -157,26 +197,44 @@
             <group delimiter=", " prefix=" (" suffix=")">
                 <text variable="collection-title"/>
                 <text variable="collection-number"/>
+                <text macro="access"/>
             </group>
           </group>
-
         </if>
-        <else-if type="chapter paper-conference" match="any">
+        <else-if type="paper-conference" match="any">
           <text macro="title" prefix=" " suffix="."/>
-          <group prefix=" " suffix=" ">
+          <group prefix=" " suffix=". ">
             <text value="In" suffix="&#160;: "/>
             <text macro="editor" suffix=" — "/>
-            <text variable="container-title" font-style="italic" suffix=". "/>
-        </group>
-        <group delimiter=", ">
+            <text variable="container-title" font-style="italic"/>
+            <text macro="proceedings" font-style="italic"/>
+          </group>
+        <group delimiter=" " suffix=".">
+            <text macro="publisher" suffix=", "/>
+            <text macro="pages"/>
+            <group delimiter=", " prefix=" (" suffix=")">
+                <text variable="collection-title"/>
+                <text variable="collection-number"/>
+            </group>  
+        </group>      
+        </else-if>
+        <else-if type="chapter" match="any">
+          <text macro="title" prefix=" " suffix="."/>
+          <group prefix=" " suffix=". ">
+            <text value="In" suffix="&#160;: "/>
+            <text macro="editor" suffix=" — "/>
+            <text variable="container-title" font-style="italic"/>
+          </group>
+        <group delimiter=", " suffix=".">
             <text macro="publisher"/>
             <text macro="pages"/>
-        </group>
-        <group delimiter=", " prefix=" (" suffix=").">
-            <text variable="collection-title"/>
-            <text variable="collection-number"/>
-        </group>        
+            <group delimiter=", " prefix=" (" suffix=")">
+                <text variable="collection-title"/>
+                <text variable="collection-number"/>
+            </group>  
+        </group>      
         </else-if>
+        
         <else-if type="thesis">
           <group prefix=" " delimiter=", " suffix=". ">
             <text macro="title"/>
@@ -207,9 +265,12 @@
               <text macro="year-date" prefix=", "/>
             </group>
             <group prefix=" ">
-              <label variable="locator" form="short"/>
-              <text variable="page" prefix="p.&#160;"/>
-              <text macro="access" prefix="(" suffix=")"/>
+                <choose>
+                    <if variable="page">
+                        <text macro="pages"/>
+                    </if>
+                </choose>
+                <text macro="access" prefix="(" suffix=")"/>
             </group>
           </group>
         </else>
