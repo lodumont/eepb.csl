@@ -105,6 +105,16 @@
       <text macro="year-date"/>
     </group>
   </macro>
+  <macro name="collection">
+    <choose>
+        <if variable="collection-number">
+            <text variable="collection-number"/>
+        </if>
+        <else-if variable="issue">
+            <text variable="issue"/>
+        </else-if>
+    </choose>
+  </macro>
   <macro name="proceedings">
     <choose>
         <if variable="event">
@@ -196,14 +206,7 @@
             </group>
             <group delimiter=", " prefix=" (" suffix=")">
                 <text variable="collection-title"/>
-                <choose>
-                    <if variable="collection-number">
-                        <text variable="collection-number"/>
-                    </if>
-                    <else-if variable="issue">
-                        <text variable="issue"/>
-                    </else-if>
-                </choose>
+                <text macro="collection"/>
                 <text macro="access"/>
             </group>
           </group>
@@ -221,7 +224,7 @@
             <text macro="pages"/>
             <group delimiter=", " prefix=" (" suffix=")">
                 <text variable="collection-title"/>
-                <text variable="collection-number"/>
+                <text macro="collection"/>
             </group>  
         </group>      
         </else-if>
@@ -237,11 +240,10 @@
             <text macro="pages"/>
             <group delimiter=", " prefix=" (" suffix=")">
                 <text variable="collection-title"/>
-                <text variable="collection-number"/>
+                <text macro="collection"/>
             </group>  
         </group>      
         </else-if>
-        
         <else-if type="thesis">
           <group prefix=" " delimiter=", " suffix=". ">
             <text macro="title"/>
@@ -252,7 +254,7 @@
             </group>
             <group delimiter=", " prefix=" (" suffix=")">
                 <text variable="collection-title"/>
-                <text variable="collection-number"/>
+                <text macro="collection"/>
             </group>
             <text prefix=" " macro="access" suffix="."/>
           </group>
